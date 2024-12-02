@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Editor on Canvas</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            color: #3C3C3C;
+            font-family: 'sans-serif';
+        }
+        #login {
+            background-image: url('https://img.freepik.com/free-vector/aged-paper-texture-background-design_60389-141.jpg?semt=ais_hybrid');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #editor {
+            background-image: url('https://img.freepik.com/free-vector/aged-paper-texture-background-design_60389-141.jpg?semt=ais_hybrid');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            padding: 20px;
+            min-height: 100vh;
+            display: none;
+        }
+        #canvas-container {
+            border: 1px solid #FFFFFF;
+            position: relative;
+            width: 800px;
+            height: 600px;
+            margin: 20px auto;
+            background: #FFFFFF;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            background: transparent;
+        }
+        .editor-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+        }
+        input, select, button {
+            background-color: #FFFFFF;
+            color: #3C3C3C;
+            border: 1px solid #FFFFFF;
+        }
+        button:hover {
+            background-color: #FFEEEE;
+        }
+        .navbar {
+            background-color: #FFFFFF;
+            color: #3C3C3C;
+            padding: 1rem;
+            text-align: center;
+        }
+        .navbar a {
+            color: #3C3C3C;
+            margin: 0 1rem;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .navbar a:hover {
+            color: #3C3C3C;
+        }
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #FFFFFF;
+        }
+        .editor-header h2 {
+            margin: 0;
+            color: #3C3C3C;
+        }
+        .editor-header button {
+            background-color: #FFFFFF;
+            color: #3C3C3C;
+            border: 1px solid #FFFFFF;
+        }
+        .editor-header button:hover {
+            background-color: #FFEEEE;
+        }
+        .footer {
+            background-color: #FFFFFF;
+            color: #3C3C3C;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="login" class="flex items-center justify-center">
+    <div class="login-container w-full max-w-sm">
+        <h2 class="text-center text-2xl font-bold mb-4">Login</h2>
+        <div>
+            <label for="email" class="block text-gray-700">Email</label>
+            <input id="email" type="email" class="shadow appearance-none border rounded w-full py-2 px-3 mb-4">
+
+            <label for="password" class="block text-gray-700">Password</label>
+            <input id="password" type="password" class="shadow appearance-none border rounded w-full py-2 px-3 mb-4">
+
+            <button id="login-btn" class="bg-[#FFFFFF] border-[#FFFFFF] hover:bg-[#FFEEEE] text-[#3C3C3C] font-bold py-2 px-4 rounded w-full">
+                Login
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="editor">
+    <div class="editor-header">
+        <h2 class="text-2xl font-bold">Canvas Editor</h2>
+        <button id="logout-btn" class="bg-[#FFFFFF] border-[#FFFFFF] hover:bg-[#FFEEEE] text-[#3C3C3C] px-4 py-2 rounded">Logout</button>
+    </div>
+
+    <div class="container mx-auto p-4 editor-container">
+        <div id="canvas-container">
+            <canvas id="textCanvas" width="800" height="600"></canvas>
+        </div>
+
+        <div class="flex justify-center space-x-4 mt-4">
+            <input id="text-input" type="text" placeholder="Enter text" class="border rounded py-2 px-4 focus:outline-none">
+            <select id="font-select" class="border rounded py-2 px-4 focus:outline-none">
+                <option value="Arial">Arial</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Times New Roman">Times New Roman</option>
+            </select>
+            <input id="color-picker" type="color" class="border rounded py-2 px-4 focus:outline-none">
+            <label for="font-size" class="text-gray-700">Font Size</label>
+            <input id="font-size" type="range" min="10" max="100" value="20" class="border rounded py-2 px-4 focus:outline-none">
+            <label for="bold" class="flex items-center">
+                <input id="bold" type="checkbox" class="mr-2">Bold
+            </label>
+            <label for="italic" class="flex items-center">
+                <input id="italic" type="checkbox" class="mr-2">Italic
+            </label>
+            <button id="add-text" class="bg-[#FFFFFF] border-[#FFFFFF] hover:bg-[#FFEEEE] text-[#3C3C3C] px-4 py-2 rounded">Add Text</button>
+            <button id="undo" class="bg-[#FFFFFF] border-[#FFFFFF] hover:bg-[#FFEEEE] text-[#3C3C3C] px-4 py-2 rounded">Undo</button>
+            <button id="redo" class="bg-[#FFFFFF] border-[#FFFFFF] hover:bg-[#FFEEEE] text-[#3C3C3C] px-4 py-2 rounded">Redo</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const loginDiv = document.getElementById('login');
+    const editorDiv = document.getElementById('editor');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    loginBtn.addEventListener('click', () => {
+        const email = emailInput.value;
+        const password = passwordInput.value;
+        if (email && password) {
+            loginDiv.style.display = 'none';
+            editorDiv.style.display = 'block';
+        } else {
+            alert('Please enter both email and password');
+        }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+        loginDiv.style.display = 'flex';
+        editorDiv.style.display = 'none';
+    });
+
+    const canvas = document.getElementById('textCanvas');
+    const ctx = canvas.getContext('2d');
+    const textInput = document.getElementById('text-input');
+    const fontSelect = document.getElementById('font-select');
+    const colorPicker = document.getElementById('color-picker');
+    const fontSizeInput = document.getElementById('font-size');
+    const boldCheckbox = document.getElementById('bold');
+    const italicCheckbox = document.getElementById('italic');
+    const addTextBtn = document.getElementById('add-text');
+    const undoBtn = document.getElementById('undo');
+    const redoBtn = document.getElementById('redo');
+
+    let actions = [];
+    let undoneActions = [];
+    let currentText = null;
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    addTextBtn.addEventListener('click', () => {
+        const text = textInput.value;
+        if (text) {
+            const font = `${boldCheckbox.checked ? 'bold' : ''} ${italicCheckbox.checked ? 'italic' : ''} ${fontSizeInput.value}px ${fontSelect.value}`;
+            const color = colorPicker.value;
+            const x = 50;
+            const y = 100;
+            ctx.font = font;
+            ctx.fillStyle = color;
+            ctx.fillText(text, x, y);
+            actions.push({ type: 'add', text, font, color, x, y });
+            undoneActions = [];
+            textInput.value = '';
+        } else {
+            alert('Please enter text to add');
+        }
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+        const mouseX = e.offsetX;
+        const mouseY = e.offsetY;
+        for (let i = actions.length - 1; i >= 0; i--) {
+            const action = actions[i];
+            const textWidth = ctx.measureText(action.text).width;
+            const textHeight = parseInt(action.font, 10); // Simplified height estimation
+            if (mouseX >= action.x && mouseX <= action.x + textWidth &&
+                mouseY >= action.y - textHeight && mouseY <= action.y) {
+                isDragging = true;
+                currentText = action;
+                offsetX = mouseX - action.x;
+                offsetY = mouseY - action.y;
+                break;
+            }
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (isDragging && currentText) {
+            const mouseX = e.offsetX;
+            const mouseY = e.offsetY;
+            currentText.x = mouseX - offsetX;
+            currentText.y = mouseY - offsetY;
+            redrawCanvas();
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        if (isDragging) {
+            actions[actions.length - 1] = currentText; // Update last action
+            isDragging = false;
+            currentText = null;
+        }
+    });
+
+    undoBtn.addEventListener('click', () => {
+        if (actions.length > 0) {
+            const lastAction = actions.pop();
+            undoneActions.push(lastAction);
+            redrawCanvas();
+        }
+    });
+
+    redoBtn.addEventListener('click', () => {
+        if (undoneActions.length > 0) {
+            const lastUndoneAction = undoneActions.pop();
+            actions.push(lastUndoneAction);
+            redrawCanvas();
+        }
+    });
+
+    function redrawCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        actions.forEach(action => {
+            ctx.font = action.font;
+            ctx.fillStyle = action.color;
+            ctx.fillText(action.text, action.x, action.y);
+        });
+    }
+</script>
+</body>
+</html>
